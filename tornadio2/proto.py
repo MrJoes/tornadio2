@@ -21,13 +21,15 @@
     Socket.IO protocol related functions
 """
 import logging
+import datetime
+
+dthandler = lambda obj: obj.isoformat() if isinstance(obj, datetime.datetime) else None
 
 try:
     import simplejson as json
-    import datetime
     json_decimal_args = {
         "use_decimal": True,
-        "default": lambda obj: obj.isoformat() if isinstance(obj, datetime.datetime) else None,
+        "default": dthandler,
     }
 except ImportError:
     import json
@@ -38,7 +40,10 @@ except ImportError:
             if isinstance(o, decimal.Decimal):
                 return float(o)
             return super(DecimalEncoder, self).default(o)
-    json_decimal_args = {"cls": DecimalEncoder}
+    json_decimal_args = {
+        "cls": DecimalEncoder,
+        "default": dthandler,
+    }
 
 # Packet ids
 DISCONNECT = '0'
