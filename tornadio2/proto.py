@@ -24,7 +24,11 @@ import logging
 
 try:
     import simplejson as json
-    json_decimal_args = {"use_decimal": True}
+    import datetime
+    json_decimal_args = {
+        "use_decimal": True,
+        "default": lambda obj: obj.isoformat() if isinstance(obj, datetime.datetime) else None,
+    }
 except ImportError:
     import json
     import decimal
@@ -140,7 +144,7 @@ def event(endpoint, name, message_id, *args, **kwargs):
     return u'5:%s:%s:%s' % (
         message_id or '',
         endpoint or '',
-        json.dumps(evt)
+        json.dumps(evt, **json_decimal_args)
     )
 
 
