@@ -203,7 +203,7 @@ def json_dumps(msg):
     `msg`
         Object to dump
     """
-    return json.dumps(msg)
+    return json.dumps(msg, **json_decimal_args)
 
 
 def json_load(msg):
