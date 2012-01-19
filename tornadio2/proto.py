@@ -22,6 +22,7 @@
 """
 import logging
 import datetime
+from bson import json_util
 
 dthandler = lambda obj: obj.isoformat() if isinstance(obj, datetime.datetime) else None
 
@@ -29,7 +30,7 @@ try:
     import simplejson as json
     json_decimal_args = {
         "use_decimal": True,
-        "default": dthandler,
+        "default": json_util.default,
     }
 except ImportError:
     import json
@@ -42,7 +43,7 @@ except ImportError:
             return super(DecimalEncoder, self).default(o)
     json_decimal_args = {
         "cls": DecimalEncoder,
-        "default": dthandler,
+        "default": json_util.default,
     }
 
 # Packet ids
@@ -212,7 +213,7 @@ def json_load(msg):
     `msg`
         json encoded object
     """
-    return json.loads(msg)
+    return json.loads(msg, object_hook=json_util.object_hook)
 
 
 def decode_frames(data):
