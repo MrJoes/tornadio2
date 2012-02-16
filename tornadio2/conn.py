@@ -151,7 +151,7 @@ class SocketConnection(object):
         """Default on_message handler. Must be overridden in your application"""
         raise NotImplementedError()
 
-    def on_event(self, name, *args, **kwargs):
+    def on_event(self, name, data, *args, **kwargs):
         """Default on_event handler.
 
         By default, it uses decorator-based approach to handle events,
@@ -159,10 +159,8 @@ class SocketConnection(object):
 
         `name`
             Event name
-        `args`
-            Event args
-        `kwargs`
-            Event kwargs
+        `data`
+            Event args or kwargs
 
         There's small magic around event handling.
         If you send exactly one parameter from the client side and it is dict,
@@ -194,19 +192,19 @@ class SocketConnection(object):
 
         if handler:
             try:
-                if args:
-                    return handler(self, *args)
+                if isinstance(data, list):
+                    return handler(self, *data)
                 else:
-                    return handler(self, **kwargs)
+                    return handler(self, **data)
             except TypeError:
-                if args:
+                if isinstance(data, list):
                     logging.error(('Attempted to call event handler %s ' +
                                   'with %s arguments.') % (handler,
-                                                           repr(args)))
+                                                           repr(data)))
                 else:
                     logging.error(('Attempted to call event handler %s ' +
                                   'with %s arguments.') % (handler,
-                                                           repr(kwargs)))
+                                                           repr(data)))
                 raise
         else:
             logging.error('Invalid event name: %s' % name)

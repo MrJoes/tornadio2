@@ -21,10 +21,17 @@
     Socket.IO protocol related functions
 """
 import logging
+import datetime
+from bson import json_util
+
+dthandler = lambda obj: obj.isoformat() if isinstance(obj, datetime.datetime) else None
 
 try:
     import simplejson as json
-    json_decimal_args = {"use_decimal": True}
+    json_decimal_args = {
+        "use_decimal": True,
+        "default": json_util.default,
+    }
 except ImportError:
     import json
     import decimal
@@ -34,7 +41,10 @@ except ImportError:
             if isinstance(o, decimal.Decimal):
                 return float(o)
             return super(DecimalEncoder, self).default(o)
-    json_decimal_args = {"cls": DecimalEncoder}
+    json_decimal_args = {
+        "cls": DecimalEncoder,
+        "default": json_util.default,
+    }
 
 # Packet ids
 DISCONNECT = '0'
@@ -140,7 +150,7 @@ def event(endpoint, name, message_id, *args, **kwargs):
     return u'5:%s:%s:%s' % (
         message_id or '',
         endpoint or '',
-        json.dumps(evt)
+        json.dumps(evt, **json_decimal_args)
     )
 
 
@@ -194,7 +204,7 @@ def json_dumps(msg):
     `msg`
         Object to dump
     """
-    return json.dumps(msg)
+    return json.dumps(msg, **json_decimal_args)
 
 
 def json_load(msg):
@@ -203,7 +213,7 @@ def json_load(msg):
     `msg`
         json encoded object
     """
-    return json.loads(msg)
+    return json.loads(msg, object_hook=json_util.object_hook)
 
 
 def decode_frames(data):
