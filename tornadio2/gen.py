@@ -42,7 +42,14 @@ class SyncRunner(Runner):
         """
         self._callback = callback
 
-        super(SyncRunner, self).__init__(gen)
+        def final_callback(value):
+            if value is not None:
+                raise ReturnValueIgnoredError(
+                    "@gen.sync_engine functions cannot return values:"
+                    "%r" % (value,))
+                assert value is None
+
+        super(SyncRunner, self).__init__(gen, final_callback)
 
     def run(self):
         """Overloaded run function"""
