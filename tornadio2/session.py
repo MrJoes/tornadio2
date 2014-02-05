@@ -406,11 +406,11 @@ class Session(sessioncontainer.SessionBase):
                     # Fix for the http://bugs.python.org/issue4978 for older Python versions
                     str_args = dict((str(x), y) for x, y in args[0].iteritems())
 
-                    ack_response = conn.on_event(event['name'], kwargs=str_args)
+                    ack_response = conn.on_event(event['name'], msg_id=msg_id, kwargs=str_args)
                 else:
-                    ack_response = conn.on_event(event['name'], args=args)
+                    ack_response = conn.on_event(event['name'], msg_id=msg_id, args=args)
 
-                if msg_id:
+                if ack_response is not None and msg_id:
                     if msg_id.endswith('+'):
                         msg_id = msg_id[:-1]
 
