@@ -374,9 +374,8 @@ class Session(sessioncontainer.SessionBase):
                 logger.error('Invalid endpoint: %s' % msg_endpoint)
                 return
 
-            if msg_type == proto.HEARTBEAT:
-                self._missed_heartbeats = 0
-            elif msg_type == proto.MESSAGE:
+            self._missed_heartbeats = 0 # any message is a valid indication of client alive-ness
+            if msg_type == proto.MESSAGE:
                 # Handle text message
                 conn.on_message(msg_data)
 
