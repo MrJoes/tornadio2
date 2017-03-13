@@ -93,7 +93,7 @@ class DummyLoop():
 
     @gen.sync_engine
     def test(self, value):
-        for n in xrange(2):
+        for n in range(2):
             self.v += (yield gen.Task(self.queue_type, value))
 
 def test():

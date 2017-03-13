@@ -70,7 +70,7 @@ class EventMagicMeta(type):
         super(EventMagicMeta, cls).__init__(name, bases, attrs)
 
 
-class SocketConnection(object):
+class SocketConnection(object, metaclass=EventMagicMeta):
     """Subclass this class and define at least `on_message()` method to make a Socket.IO
     connection handler.
 
@@ -96,7 +96,6 @@ class SocketConnection(object):
         sock.emit('test', {msg:'Hello World'});
 
     """
-    __metaclass__ = EventMagicMeta
 
     __endpoints__ = dict()
 

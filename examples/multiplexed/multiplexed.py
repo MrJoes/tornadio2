@@ -31,7 +31,7 @@ class ChatConnection(SocketConnection):
         return 'User%d' % cls.unique_id
 
     def on_open(self, info):
-        print 'Chat', repr(info)
+        print(('Chat', repr(info)))
 
         # Give user unique ID
         self.user_name = self.get_username()
@@ -54,7 +54,7 @@ class ChatConnection(SocketConnection):
 
 class PingConnection(SocketConnection):
     def on_open(self, info):
-        print 'Ping', repr(info)
+        print(('Ping', repr(info)))
 
     def on_message(self, message):
         now = datetime.datetime.now()
@@ -68,7 +68,7 @@ class RouterConnection(SocketConnection):
                      '/ping': PingConnection}
 
     def on_open(self, info):
-        print 'Router', repr(info)
+        print(('Router', repr(info)))
 
 # Create tornadio server
 MyRouter = TornadioRouter(RouterConnection)

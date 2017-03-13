@@ -22,7 +22,7 @@
 """
 import time
 import logging
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from tornado.web import HTTPError, asynchronous
 
@@ -88,7 +88,7 @@ class TornadioPollingHandlerBase(preflight.PreflightHandler):
             data = self.request.body.decode('utf-8')
 
             # IE XDomainRequest support
-            if data.startswith(u'data='):
+            if data.startswith('data='):
                 data = data[5:]
 
             # Process packets one by one
@@ -295,10 +295,10 @@ class TornadioJSONPHandler(TornadioXHRPollingHandler):
                 raise HTTPError(403)
 
             # Grab data
-            data = urllib.unquote_plus(data[2:]).decode('utf-8')
+            data = urllib.parse.unquote_plus(data[2:]).decode('utf-8')
 
             # If starts with double quote, it is json encoded (socket.io workaround)
-            if data.startswith(u'"'):
+            if data.startswith('"'):
                 data = proto.json_load(data)
 
             # Process packets one by one
